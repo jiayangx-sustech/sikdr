@@ -1,26 +1,20 @@
 ## Resubmission
 
-This replaces the 0.1.0 upload made shortly before (not yet reviewed). Changes:
+This fixes the problems found by the incoming pre-tests of the previous 0.1.0 upload:
 
-* Added executable examples to every exported function.
-* Added URL, BugReports and the copyright-holder role.
-* Reference tests now use tolerances suited to other platforms.
+* A stray control character in index_predict.Rd broke the PDF and HTML manuals; it is
+  replaced by the intended `\beta`. The PDF manual now builds without errors.
 
-## Submission
-
-This is a new submission. The package implements the method of
-Xu, Jia, Chen and Chen, "Finite-Smoothing Efficiency and Inference in Single-Index Models"
-(arXiv:2611.22384).
+The flagged words "Jia" and "Xu" in DESCRIPTION are author names.
 
 ## Test environments
 
-* Windows 11, R 4.6.2 (local)
+* Windows 11, R 4.6.2 (local), with MiKTeX for the PDF manual
 
 ## R CMD check results
 
-`R CMD check --as-cran` of the first upload: 0 errors | 0 warnings | 2 notes.
-For this resubmission the examples, tests, vignette and Rd checks were rerun locally and pass.
+0 errors | 0 warnings | 3 notes
 
 * This is a new submission.
-* README.md and NEWS.md could not be checked locally because pandoc is not installed
-  on the test machine.
+* README.md and NEWS.md could not be checked locally (pandoc is not installed locally).
+* HTML validation was skipped locally (HTML Tidy is not installed locally).

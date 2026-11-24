@@ -20,7 +20,7 @@ A list with the predictions \code{pred} and the chosen \code{bandwidth}.
 }
 \description{
 Predicts \code{xte} from \code{(xtr, ytr)} by Gaussian Nadaraya--Watson regression on the
-index \eqn{x^Teta}, with the bandwidth chosen by leave-one-out squared error as in
+index \eqn{x^T\beta}, with the bandwidth chosen by leave-one-out squared error as in
 \code{\link{predict.sikdr}}. Useful for comparing directions from different estimators
 with one prediction rule.
 }
