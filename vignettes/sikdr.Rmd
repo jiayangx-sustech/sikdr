@@ -1,0 +1,136 @@
+---
+title: "Single-Index Kernel Density Regression"
+output: markdown::html_format
+vignette: >
+  %\VignetteIndexEntry{Single-Index Kernel Density Regression}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`sikdr` implements the method of Xu, Jia, Chen and Chen, *Finite-Smoothing Efficiency and
+Inference in Single-Index Models* (arXiv:2611.22384). The model is
+
+$$Y = m(\beta^T X) + \varepsilon, \qquad \varepsilon \perp X .$$
+
+Methods based on the conditional mean, such as MAVE, ignore the error distribution. When the
+error is skewed or multimodal, its distribution also carries information about the
+direction. SI-KDR refits the link at every candidate direction and scores the direction by
+the leave-one-out kernel log-likelihood of the residuals.
+
+## Fitting
+
+```{r}
+library(sikdr)
+set.seed(1)
+n <- 300
+b0 <- c(1, 1, 0) / sqrt(2)
+x <- matrix(rnorm(n * 3), n, 3)
+e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))  # skewed, bimodal
+y <- sin(2 * drop(x %*% b0)) + e
+fit <- sikdr(x, y)
+fit
+```
+
+The default `tuning = "trace"` ranks twenty smoothing tuples by the trace of the case-weight
+covariance estimate at a preliminary fit. `tuning = "reference"` gives the reference rule
+(SI-KDR-R). The angle between the estimate and the true direction, in degrees:
+
+```{r}
+acos(abs(sum(fit$beta * b0))) * 180 / pi
+```
+
+## Uncertainty
+
+`vcov()` returns the case-weight covariance of the unit direction on the raw predictor
+scale. It has rank $p - 1$ because the direction has unit length.
+
+```{r}
+round(vcov(fit), 5)
+```
+
+`sikdr_test()` gives the conditional score test of a candidate direction. Under Gaussian
+predictors its $F$ distribution is exact for any single-index conditional response law,
+including heteroscedastic ones.
+
+```{r}
+sikdr_test(fit, beta = rbind(truth = b0, wrong = c(1, 0, 0)))
+```
+
+`sikdr_confset()` inverts the test over random candidates near the estimate. The accepted
+candidates form the confidence set.
+
+```{r}
+cs <- sikdr_confset(fit, draws = 100)
+nrow(cs$accepted)
+cs$max_angle * 180 / pi
+```
+
+## More predictors than observations
+
+`sikdr_screen()` ranks predictors by distance correlation on one part of the sample and fits
+SI-KDR on the other. When the screen keeps the support, the results above carry over to the
+retained model.
+
+```{r}
+set.seed(2)
+P <- 300
+xh <- matrix(rnorm(n * P), n, P)
+yh <- sin(2 * drop(xh[, 1:2] %*% c(1, 1)) / sqrt(2)) + e
+sh <- sikdr_screen(xh, yh, size = 5, tuning = "reference", covariance = FALSE)
+sh$selected
+round(sh$beta[sh$selected], 3)
+```
+
+## Energy Efficiency benchmark
+
+The package includes the UCI Energy Efficiency data. The code below predicts heating load
+from seven inputs on random splits into 576 training and 192 test buildings and compares
+SI-KDR, SI-KDR-R and mean MAVE (from the `MAVE` package). Each method reduces the inputs to
+one index and predicts with the same kernel regression rule. It takes several minutes, so it
+is not run here.
+
+```{r, eval = FALSE}
+data(energy)
+X <- as.matrix(energy[, c("relative_compactness", "surface_area", "wall_area",
+                          "overall_height", "orientation", "glazing_area",
+                          "glazing_area_distribution")])
+Y <- energy$heating_load
+nmse <- function(fit_dir, xtr, ytr, xte, yte) {
+  pred <- sikdr:::nw_index_predict(xtr, ytr, xte, fit_dir)$pred
+  mean((yte - pred)^2) / var(ytr)
+}
+set.seed(20261124)
+splits <- lapply(1:30, function(i) sample.int(768, 576))  # all splits drawn before fitting
+res <- t(sapply(splits, function(tr) {
+  mu <- colMeans(X[tr, ])
+  e <- eigen(crossprod(sweep(X[tr, ], 2, mu)) / 576, symmetric = TRUE)
+  W <- e$vectors %*% (t(e$vectors) / sqrt(e$values))
+  ztr <- sweep(X[tr, ], 2, mu) %*% W
+  zte <- sweep(X[-tr, ], 2, mu) %*% W
+  ys <- (Y[tr] - mean(Y[tr])) / sqrt(mean((Y[tr] - mean(Y[tr]))^2))
+  mave <- drop(MAVE::mave.compute(ztr, ys, method = "MEANMAVE", max.dim = 1,
+                                  screen = ncol(ztr))$dir[[1]])
+  c(sikdr = nmse(sikdr(ztr, Y[tr], covariance = FALSE)$beta, ztr, Y[tr], zte, Y[-tr]),
+    sikdr_r = nmse(sikdr(ztr, Y[tr], "reference", FALSE)$beta, ztr, Y[tr], zte, Y[-tr]),
+    mave = nmse(mave, ztr, Y[tr], zte, Y[-tr]))
+}))
+colMeans(res)
+```
+
+Results of this code on our 30 splits (stored in the package):
+
+```{r}
+b <- read.csv(system.file("extdata", "energy_benchmark.csv", package = "sikdr"))
+round(colMeans(b[, c("sikdr", "sikdr_r", "mave")]), 5)
+```
+
+These splits are not the ones used in the paper, so the numbers differ from its table.
+
+## Reference
+
+Xu, J., Jia, Y., Chen, Y. and Chen, X. Finite-smoothing efficiency and inference in
+single-index models. arXiv:2611.22384.

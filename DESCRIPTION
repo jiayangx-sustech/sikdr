@@ -1,0 +1,26 @@
+Package: sikdr
+Type: Package
+Title: Single-Index Kernel Density Regression
+Version: 0.1.0
+Authors@R: c(
+    person("Jiayang", "Xu", email = "12313323@mail.sustech.edu.cn", role = c("aut", "cre")),
+    person("Yusen", "Jia", role = "aut"),
+    person("Yangzhou", "Chen", role = "aut"),
+    person("Xin", "Chen", role = "aut"))
+Description: Estimation and inference for the single-index model with an error
+    independent of the predictors. At each candidate direction the link is refitted
+    by a protected leave-one-out kernel smoother and the direction is scored by the
+    leave-one-out kernel log-likelihood of the residuals, so skewed or multimodal
+    errors inform the direction. Bandwidths are ranked by the trace of a case-weight
+    covariance estimate, confidence sets invert a test that is exact under Gaussian
+    predictors, and distance-correlation screening extends the method to more
+    predictors than observations. Method: Xu, Jia, Chen and Chen (2026)
+    <doi:10.48550/arXiv.2611.22384>.
+License: GPL (>= 3)
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports: stats
+Suggests: testthat (>= 3.0.0), knitr, markdown, MAVE
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.1
