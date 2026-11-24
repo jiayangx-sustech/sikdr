@@ -10,6 +10,8 @@ Xu, Jia, Chen and Chen, "Finite-Smoothing Efficiency and Inference in Single-Ind
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 2 notes
 
 * This is a new submission.
+* README.md and NEWS.md could not be checked locally because pandoc is not installed
+  on the test machine.

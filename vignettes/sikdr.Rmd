@@ -100,7 +100,7 @@ X <- as.matrix(energy[, c("relative_compactness", "surface_area", "wall_area",
                           "glazing_area_distribution")])
 Y <- energy$heating_load
 nmse <- function(fit_dir, xtr, ytr, xte, yte) {
-  pred <- sikdr:::nw_index_predict(xtr, ytr, xte, fit_dir)$pred
+  pred <- index_predict(xtr, ytr, xte, fit_dir)$pred
   mean((yte - pred)^2) / var(ytr)
 }
 set.seed(20261124)

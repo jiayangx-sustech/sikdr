@@ -16,6 +16,23 @@ predict.sikdr <- function(object, newdata, ...) {
   nw_index_predict(object$x, object$y, newdata, object$beta)$pred
 }
 
+#' Kernel regression on a single index
+#'
+#' Predicts \code{xte} from \code{(xtr, ytr)} by Gaussian Nadaraya--Watson regression on the
+#' index \eqn{x^Teta}, with the bandwidth chosen by leave-one-out squared error as in
+#' \code{\link{predict.sikdr}}. Useful for comparing directions from different estimators
+#' with one prediction rule.
+#'
+#' @param xtr Training predictors.
+#' @param ytr Training response.
+#' @param xte Predictors to predict.
+#' @param beta Direction defining the index.
+#' @return A list with the predictions \code{pred} and the chosen \code{bandwidth}.
+#' @export
+index_predict <- function(xtr, ytr, xte, beta) {
+  nw_index_predict(as.matrix(xtr), as.numeric(ytr), as.matrix(xte), as.numeric(beta))
+}
+
 nw_index_predict <- function(xtr, ytr, xte, beta) {
   n <- nrow(xtr)
   ttr <- drop(xtr %*% beta)
