@@ -19,3 +19,12 @@ Returns the case-weight estimate of the covariance of the unit direction on the 
 predictor scale, \eqn{F V F^T / n}, where \eqn{F} spans the tangent space at the estimate.
 The matrix has rank \eqn{p - 1} because the direction is a unit vector.
 }
+\examples{
+set.seed(1)
+n <- 150
+x <- matrix(rnorm(n * 3), n, 3)
+e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+y <- sin(2 * drop(x \%*\% c(1, 1, 0)) / sqrt(2)) + e
+fit <- sikdr(x, y, tuning = "reference")
+vcov(fit)
+}

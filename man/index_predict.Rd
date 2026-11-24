@@ -24,3 +24,12 @@ index \eqn{x^Teta}, with the bandwidth chosen by leave-one-out squared error as
 \code{\link{predict.sikdr}}. Useful for comparing directions from different estimators
 with one prediction rule.
 }
+\examples{
+set.seed(1)
+n <- 150
+x <- matrix(rnorm(n * 3), n, 3)
+e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+y <- sin(2 * drop(x \%*\% c(1, 1, 0)) / sqrt(2)) + e
+out <- index_predict(x[1:100, ], y[1:100], x[101:150, ], c(1, 1, 0) / sqrt(2))
+mean((y[101:150] - out$pred)^2)
+}

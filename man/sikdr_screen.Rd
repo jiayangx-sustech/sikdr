@@ -27,3 +27,11 @@ keeps the top \code{size} predictors and fits \code{\link{sikdr}} on the estimat
 When the screen retains the support, the paper shows that the covariance comparison and
 the exact test carry over to the retained model.
 }
+\examples{
+set.seed(1)
+n <- 150
+x <- matrix(rnorm(n * 40), n, 40)
+y <- sin(drop(x[, 1:2] \%*\% c(1, 1)) / sqrt(2)) + rexp(n) - 1
+s <- sikdr_screen(x, y, size = 4, tuning = "reference", covariance = FALSE)
+s$selected
+}

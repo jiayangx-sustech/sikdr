@@ -3,7 +3,7 @@ Type: Package
 Title: Single-Index Kernel Density Regression
 Version: 0.1.0
 Authors@R: c(
-    person("Jiayang", "Xu", email = "12313323@mail.sustech.edu.cn", role = c("aut", "cre")),
+    person("Jiayang", "Xu", email = "12313323@mail.sustech.edu.cn", role = c("aut", "cre", "cph")),
     person("Yusen", "Jia", role = "aut"),
     person("Yangzhou", "Chen", role = "aut"),
     person("Xin", "Chen", role = "aut"))
@@ -17,6 +17,8 @@ Description: Estimation and inference for the single-index model with an error
     predictors than observations. Method: Xu, Jia, Chen and Chen (2026)
     <doi:10.48550/arXiv.2611.22384>.
 License: GPL (>= 3)
+URL: https://github.com/jiayangx-sustech/sikdr
+BugReports: https://github.com/jiayangx-sustech/sikdr/issues
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports: stats

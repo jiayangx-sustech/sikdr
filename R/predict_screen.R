@@ -9,6 +9,14 @@
 #' @param newdata Matrix of new predictors; the training predictors when missing.
 #' @param ... Unused.
 #' @return Predicted responses on the original scale.
+#' @examples
+#' set.seed(1)
+#' n <- 150
+#' x <- matrix(rnorm(n * 3), n, 3)
+#' e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+#' y <- sin(2 * drop(x %*% c(1, 1, 0)) / sqrt(2)) + e
+#' fit <- sikdr(x, y, tuning = "reference", covariance = FALSE)
+#' predict(fit, x[1:5, ])
 #' @export
 predict.sikdr <- function(object, newdata, ...) {
   if (missing(newdata)) newdata <- object$x
@@ -28,6 +36,14 @@ predict.sikdr <- function(object, newdata, ...) {
 #' @param xte Predictors to predict.
 #' @param beta Direction defining the index.
 #' @return A list with the predictions \code{pred} and the chosen \code{bandwidth}.
+#' @examples
+#' set.seed(1)
+#' n <- 150
+#' x <- matrix(rnorm(n * 3), n, 3)
+#' e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+#' y <- sin(2 * drop(x %*% c(1, 1, 0)) / sqrt(2)) + e
+#' out <- index_predict(x[1:100, ], y[1:100], x[101:150, ], c(1, 1, 0) / sqrt(2))
+#' mean((y[101:150] - out$pred)^2)
 #' @export
 index_predict <- function(xtr, ytr, xte, beta) {
   nw_index_predict(as.matrix(xtr), as.numeric(ytr), as.matrix(xte), as.numeric(beta))
@@ -63,6 +79,11 @@ softmax_rows <- function(lw) {
 #' @param x Numeric predictor matrix.
 #' @param y Response vector.
 #' @return A numeric vector of scores, one per column of \code{x}.
+#' @examples
+#' set.seed(1)
+#' x <- matrix(rnorm(100 * 6), 100, 6)
+#' y <- sin(x[, 1] + x[, 2]) + rnorm(100, sd = 0.3)
+#' round(dc_scores(x, y), 3)
 #' @export
 dc_scores <- function(x, y) {
   x <- as.matrix(x)
@@ -92,6 +113,13 @@ dc_scores <- function(x, y) {
 #' @param ... Further arguments passed to \code{\link{sikdr}}.
 #' @return A list with the screened column indices, the fit on the retained columns and the
 #'   direction embedded in all \code{ncol(x)} coordinates.
+#' @examples
+#' set.seed(1)
+#' n <- 150
+#' x <- matrix(rnorm(n * 40), n, 40)
+#' y <- sin(drop(x[, 1:2] %*% c(1, 1)) / sqrt(2)) + rexp(n) - 1
+#' s <- sikdr_screen(x, y, size = 4, tuning = "reference", covariance = FALSE)
+#' s$selected
 #' @export
 sikdr_screen <- function(x, y, size, screen_fraction = 1 / 3, ...) {
   x <- as.matrix(x)

@@ -144,6 +144,14 @@ coef.sikdr <- function(object, ...) object$beta
 #' @param object A fitted \code{"sikdr"} object with \code{covariance = TRUE}.
 #' @param ... Unused.
 #' @return A p by p covariance matrix.
+#' @examples
+#' set.seed(1)
+#' n <- 150
+#' x <- matrix(rnorm(n * 3), n, 3)
+#' e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+#' y <- sin(2 * drop(x %*% c(1, 1, 0)) / sqrt(2)) + e
+#' fit <- sikdr(x, y, tuning = "reference")
+#' vcov(fit)
 #' @export
 vcov.sikdr <- function(object, ...) {
   if (is.null(object$V)) stop("refit with covariance = TRUE")

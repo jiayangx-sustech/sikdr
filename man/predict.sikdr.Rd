@@ -22,3 +22,12 @@ the bandwidth chosen by leave-one-out squared error over
 \eqn{s_T n^{-1/5} \{0.25, 0.4, 0.6, 0.8, 1, 1.4, 2, 3\}} (\eqn{s_T} is the standard deviation
 of the training index).
 }
+\examples{
+set.seed(1)
+n <- 150
+x <- matrix(rnorm(n * 3), n, 3)
+e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+y <- sin(2 * drop(x \%*\% c(1, 1, 0)) / sqrt(2)) + e
+fit <- sikdr(x, y, tuning = "reference", covariance = FALSE)
+predict(fit, x[1:5, ])
+}

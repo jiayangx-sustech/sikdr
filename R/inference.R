@@ -79,6 +79,15 @@ candidate_stat <- function(x, ys, b, fg) {
 #' @param level Confidence level.
 #' @return A list with the accepted directions (rows), the fraction of accepted draws and the
 #'   largest accepted angle (radians) from the estimate.
+#' @examples
+#' set.seed(1)
+#' n <- 150
+#' x <- matrix(rnorm(n * 3), n, 3)
+#' e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+#' y <- sin(2 * drop(x %*% c(1, 1, 0)) / sqrt(2)) + e
+#' fit <- sikdr(x, y, tuning = "reference")
+#' cs <- sikdr_confset(fit, draws = 40)
+#' nrow(cs$accepted)
 #' @export
 sikdr_confset <- function(fit, draws = 500, level = 0.95) {
   if (!inherits(fit, "sikdr") || is.null(fit$inference_ok)) stop("fit with covariance = TRUE first")

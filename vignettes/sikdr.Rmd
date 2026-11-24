@@ -26,7 +26,7 @@ the leave-one-out kernel log-likelihood of the residuals.
 ```{r}
 library(sikdr)
 set.seed(1)
-n <- 300
+n <- 200
 b0 <- c(1, 1, 0) / sqrt(2)
 x <- matrix(rnorm(n * 3), n, 3)
 e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))  # skewed, bimodal
@@ -64,7 +64,7 @@ sikdr_test(fit, beta = rbind(truth = b0, wrong = c(1, 0, 0)))
 candidates form the confidence set.
 
 ```{r}
-cs <- sikdr_confset(fit, draws = 100)
+cs <- sikdr_confset(fit, draws = 50)
 nrow(cs$accepted)
 cs$max_angle * 180 / pi
 ```
@@ -77,7 +77,7 @@ retained model.
 
 ```{r}
 set.seed(2)
-P <- 300
+P <- 200
 xh <- matrix(rnorm(n * P), n, P)
 yh <- sin(2 * drop(xh[, 1:2] %*% c(1, 1)) / sqrt(2)) + e
 sh <- sikdr_screen(xh, yh, size = 5, tuning = "reference", covariance = FALSE)

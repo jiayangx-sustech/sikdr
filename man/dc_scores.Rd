@@ -18,3 +18,9 @@ A numeric vector of scores, one per column of \code{x}.
 Squared distance correlation (biased V-statistic) between each predictor and the
 response, as used for independent screening before fitting SI-KDR in high dimensions.
 }
+\examples{
+set.seed(1)
+x <- matrix(rnorm(100 * 6), 100, 6)
+y <- sin(x[, 1] + x[, 2]) + rnorm(100, sd = 0.3)
+round(dc_scores(x, y), 3)
+}

@@ -24,3 +24,13 @@ Draws candidate directions uniformly from the cap of angular radius
 accepted by \code{\link{sikdr_test}}. The set is empty when the inference conditions of the
 fit fail.
 }
+\examples{
+set.seed(1)
+n <- 150
+x <- matrix(rnorm(n * 3), n, 3)
+e <- ifelse(runif(n) < 0.7, rnorm(n, -0.9, 0.5), rnorm(n, 2.1, 0.3))
+y <- sin(2 * drop(x \%*\% c(1, 1, 0)) / sqrt(2)) + e
+fit <- sikdr(x, y, tuning = "reference")
+cs <- sikdr_confset(fit, draws = 40)
+nrow(cs$accepted)
+}
